@@ -3,6 +3,8 @@ const app = require('./app');
 const env = require('./config/env');
 const { Server } = require('socket.io');
 
+const { initializeSockets } = require('./sockets/socketManager');
+
 const server = http.createServer(app);
 
 const io = new Server(server, {
@@ -12,12 +14,7 @@ const io = new Server(server, {
   }
 });
 
-io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
-  socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
-  });
-});
+initializeSockets(io);
 
 server.listen(env.PORT, () => {
   console.log(`Server is running on port ${env.PORT}`);
