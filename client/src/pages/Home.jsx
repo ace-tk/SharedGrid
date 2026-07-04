@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useSocket } from '../hooks/useSocket';
 import Grid from '../components/Grid';
-import { fetchGrid } from '../services/grid.api';
+import ClaimModal from '../components/ClaimModal';
+import { fetchGrid, claimGridBlock } from '../services/grid.api';
 
 function Home() {
   const { isConnected, isReconnecting, onlineUsers } = useSocket();
   const [blocks, setBlocks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedBlock, setSelectedBlock] = useState(null);
 
   useEffect(() => {
     const loadGrid = async () => {
@@ -29,6 +31,21 @@ function Home() {
     loadGrid();
   }, []);
 
+  const handleCellClick = (block) => {
+    if (!block.claimed) {
+      setSelectedBlock(block);
+    }
+  };
+
+  const handleClaimSubmit = async (id, name, color) => {
+    const data = await claimGridBlock(id, name, color);
+    if (data.success) {
+      setBlocks((prevBlocks) => 
+        prevBlocks.map(b => b.id === id ? data.block : b)
+      );
+    }
+  };
+
   let statusDisplay;
   if (isReconnecting) {
     statusDisplay = <p className="text-sm font-medium text-yellow-600 mb-2">🟡 Reconnecting...</p>;
@@ -39,7 +56,7 @@ function Home() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center py-10 px-4 bg-gray-50 text-gray-900">
+    <div className="min-h-screen flex flex-col items-center py-10 px-4 bg-gray-50 text-gray-900 relative">
       <div className="text-center mb-6">
         <h1 className="text-4xl sm:text-5xl font-extrabold mb-2 text-indigo-600 tracking-tight">SharedGrid</h1>
         <p className="text-lg text-gray-600 font-medium mb-4">Real-Time Collaborative Block Claiming Platform</p>
@@ -56,9 +73,15 @@ function Home() {
         ) : error ? (
           <p className="text-xl text-red-500 font-medium">{error}</p>
         ) : (
-          <Grid blocks={blocks} />
+          <Grid blocks={blocks} onCellClick={handleCellClick} />
         )}
       </div>
+
+      <ClaimModal 
+        block={selectedBlock} 
+        onClose={() => setSelectedBlock(null)} 
+        onClaim={handleClaimSubmit} 
+      />
     </div>
   );
 }
