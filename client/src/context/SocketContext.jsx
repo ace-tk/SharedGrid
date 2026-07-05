@@ -17,26 +17,15 @@ export const SocketProvider = ({ children }) => {
       setIsReconnecting(false);
     };
 
-    const onDisconnect = () => {
-      setIsConnected(false);
-    };
+    const onDisconnect = () => setIsConnected(false);
 
-    const onReconnectAttempt = () => {
-      setIsReconnecting(true);
-    };
+    const onReconnectAttempt = () => setIsReconnecting(true);
 
-    const onConnectError = (error) => {
-      console.error('Socket connection error:', error);
-      setIsConnected(false);
-    };
+    const onConnectError = () => setIsConnected(false);
 
-    const onOnlineUsers = (data) => {
-      setOnlineUsers(data.onlineUsers);
-    };
+    const onOnlineUsers = (data) => setOnlineUsers(data.onlineUsers);
 
-    const onBlockClaimed = (data) => {
-      setLastClaimedBlock(data.block);
-    };
+    const onBlockClaimed = (data) => setLastClaimedBlock(data.block);
 
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
