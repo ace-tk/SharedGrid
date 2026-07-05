@@ -1,4 +1,5 @@
 const gridService = require('../services/grid.service');
+const { broadcastBlockClaimed } = require('../sockets/socketManager');
 
 const getGrid = async (req, res) => {
   try {
@@ -26,6 +27,8 @@ const claimGridBlock = async (req, res) => {
     }
     
     const updatedBlock = await gridService.claimBlock(id, ownerName, ownerColor);
+    
+    broadcastBlockClaimed(updatedBlock);
     
     res.json({
       success: true,

@@ -1,6 +1,8 @@
 let onlineUsers = 0;
+let ioInstance = null;
 
 const initializeSockets = (io) => {
+  ioInstance = io;
   io.on('connection', (socket) => {
     onlineUsers++;
     
@@ -27,6 +29,13 @@ const initializeSockets = (io) => {
   });
 };
 
+const broadcastBlockClaimed = (block) => {
+  if (ioInstance) {
+    ioInstance.emit('block-claimed', { block });
+  }
+};
+
 module.exports = {
-  initializeSockets
+  initializeSockets,
+  broadcastBlockClaimed
 };

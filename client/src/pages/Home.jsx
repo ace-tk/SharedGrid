@@ -5,7 +5,7 @@ import ClaimModal from '../components/ClaimModal';
 import { fetchGrid, claimGridBlock } from '../services/grid.api';
 
 function Home() {
-  const { isConnected, isReconnecting, onlineUsers } = useSocket();
+  const { isConnected, isReconnecting, onlineUsers, lastClaimedBlock } = useSocket();
   const [blocks, setBlocks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,6 +30,18 @@ function Home() {
 
     loadGrid();
   }, []);
+
+  useEffect(() => {
+    if (lastClaimedBlock) {
+      setBlocks((prevBlocks) => {
+        const existing = prevBlocks.find(b => b.id === lastClaimedBlock.id);
+        if (existing && existing.claimed) {
+          return prevBlocks;
+        }
+        return prevBlocks.map(b => b.id === lastClaimedBlock.id ? lastClaimedBlock : b);
+      });
+    }
+  }, [lastClaimedBlock]);
 
   const handleCellClick = (block) => {
     if (!block.claimed) {

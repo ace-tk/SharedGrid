@@ -7,6 +7,7 @@ export const SocketProvider = ({ children }) => {
   const [isConnected, setIsConnected] = useState(false);
   const [isReconnecting, setIsReconnecting] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState(0);
+  const [lastClaimedBlock, setLastClaimedBlock] = useState(null);
 
   useEffect(() => {
     socket.connect();
@@ -33,11 +34,16 @@ export const SocketProvider = ({ children }) => {
       setOnlineUsers(data.onlineUsers);
     };
 
+    const onBlockClaimed = (data) => {
+      setLastClaimedBlock(data.block);
+    };
+
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
     socket.on('reconnect_attempt', onReconnectAttempt);
     socket.on('connect_error', onConnectError);
     socket.on('online-users', onOnlineUsers);
+    socket.on('block-claimed', onBlockClaimed);
 
     return () => {
       socket.off('connect', onConnect);
@@ -45,12 +51,13 @@ export const SocketProvider = ({ children }) => {
       socket.off('reconnect_attempt', onReconnectAttempt);
       socket.off('connect_error', onConnectError);
       socket.off('online-users', onOnlineUsers);
+      socket.off('block-claimed', onBlockClaimed);
       socket.disconnect();
     };
   }, []);
 
   return (
-    <SocketContext.Provider value={{ isConnected, isReconnecting, onlineUsers, socket }}>
+    <SocketContext.Provider value={{ isConnected, isReconnecting, onlineUsers, lastClaimedBlock, socket }}>
       {children}
     </SocketContext.Provider>
   );
