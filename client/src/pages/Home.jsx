@@ -89,11 +89,13 @@ function Home() {
         )}
       </div>
 
-      <ClaimModal 
-        block={selectedBlock} 
-        onClose={() => setSelectedBlock(null)} 
-        onClaim={handleClaimSubmit} 
-      />
+      {selectedBlock && (
+        <ClaimModal 
+          block={selectedBlock} 
+          onClose={() => setSelectedBlock(null)} 
+          onClaim={handleClaimSubmit} 
+        />
+      )}
     </div>
   );
 }

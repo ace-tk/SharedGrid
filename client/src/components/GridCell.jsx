@@ -12,9 +12,9 @@ const GridCell = ({ block, onClick }) => {
         w-full h-full aspect-square 
         rounded-[2px] text-[8px] sm:text-[10px] 
         font-medium overflow-hidden select-none 
-        transition-all duration-200 
+        transition-colors duration-300 ease-in-out
         ${claimed 
-          ? 'text-white shadow-sm cursor-default' 
+          ? 'text-white shadow-sm cursor-not-allowed' 
           : 'bg-gray-200 hover:bg-gray-300 text-transparent cursor-pointer hover:scale-110 hover:z-10 hover:shadow-md'
         }
       `}
