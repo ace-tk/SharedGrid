@@ -6,7 +6,12 @@ const getGrid = async (req, res) => {
     const blocks = await gridService.getAllBlocks();
     res.json({ success: true, total: blocks.length, blocks });
   } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
+    console.error("GRID ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
   }
 };
 
